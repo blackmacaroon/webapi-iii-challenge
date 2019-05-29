@@ -8,7 +8,7 @@ router.get('/', (req, res) => {
  
       Post.get()
       .then(posts => {
-            res.status(200).json({ posts });
+            res.status(200).json(posts);
       })
       .catch(err => {
             res.status(500).json({ error: 'could not get posts from database'})
@@ -30,14 +30,14 @@ router.put('/:id', (req, res) => {
 
 // custom middleware
 
-function validatePostId(req, res, next) {
-      // const { postId } = req.params.id;
-      // if (!postId) {
-      //       res.status(400).json({ message: "invalid user id" })
-      // } else {
-      //       res.status(200).json( req.user )
-      //       next()
-      // }
+async function validatePostId(req, res, next) {
+      const post = await Post.getById(req.params.id);
+      if (post) {
+            res.status(200).json(req.body)
+            next()
+      } else {
+            res.status(404).json({ message: "invalid post id" })
+      }
 };
 
 module.exports = router;

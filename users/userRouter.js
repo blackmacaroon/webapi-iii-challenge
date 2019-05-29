@@ -46,7 +46,11 @@ router.get('/:id/posts', (req, res) => {
 });
 
 router.delete('/:id', (req, res) => {
-
+      User.delete(req.params.id)
+      .then(user =>{
+            if()
+      })
+      .catch()
 });
 
 router.put('/:id', (req, res) => {
@@ -63,7 +67,7 @@ async function validateUserId(req, res, next) {
             next();
       } else {
             // console.log('user', user)
-            res.status(404).json({ message: "invalid user id" })    
+            res.status(400).json({ message: "invalid user id" })
       }
 
 };
