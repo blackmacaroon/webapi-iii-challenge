@@ -1,13 +1,18 @@
-const express = 'express';
+// const express = require('express');
 
 const Post = require('./postDb');
 
-const router = express.Router();
+const router = require('express').Router();
 
 router.get('/', (req, res) => {
-      console.log(req.body);
-      console.log(req.params);
-      console.log(req.query);
+ 
+      Post.get()
+      .then(posts => {
+            res.status(200).json({ posts });
+      })
+      .catch(err => {
+            res.status(500).json({ error: 'could not get posts from database'})
+      })
 
 });
 
@@ -26,7 +31,13 @@ router.put('/:id', (req, res) => {
 // custom middleware
 
 function validatePostId(req, res, next) {
-
+      const { postId } = req.params.id;
+      if (!postId) {
+            res.status(400).json({ message: "invalid user id" })
+      } else {
+            res.status(200).json( req.user )
+            next()
+      }
 };
 
 module.exports = router;

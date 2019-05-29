@@ -1,14 +1,19 @@
-const express = 'express';
+// const express = require('express');
 
 const User = require('./userDb');
 
-const router = express.Router();
+const router = require('express').Router();
 
 
 router.get('/', (req, res) => {
-      console.log(req.body);
-      console.log(req.params);
-      console.log(req.query);
+      
+      User.get()
+      .then(users => {
+            res.status(200).json({ users });
+      })
+      .catch(err => {
+            res.status(500).json({ error: 'could not get users from database'})
+      })
 });
 
 router.post('/', (req, res) => {      
@@ -39,6 +44,13 @@ router.put('/:id', (req, res) => {
 //custom middleware
 
 function validateUserId(req, res, next) {
+      const { postId } = req.params.id;
+      if (!postId) {
+            res.status(400).json({ message: "invalid user id" })
+      } else {
+            res.status(200).json( req.user )
+            next()
+      }
 
 };
 
