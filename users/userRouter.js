@@ -1,6 +1,6 @@
 const express = 'express';
 
-const db = require('./userDb');
+const User = require('./userDb');
 
 const router = express.Router();
 
@@ -50,4 +50,4 @@ function validatePost(req, res, next) {
 
 };
 
-module.exports = UserRouter;
+module.exports = router;

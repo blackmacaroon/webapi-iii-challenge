@@ -1,6 +1,6 @@
 const express = 'express';
 
-const db = require('./postDb');
+const Post = require('./postDb');
 
 const router = express.Router();
 
@@ -29,4 +29,4 @@ function validatePostId(req, res, next) {
 
 };
 
-module.exports = PostRouter;
+module.exports = router;
