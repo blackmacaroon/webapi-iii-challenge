@@ -1,10 +1,17 @@
 const express = 'express';
 
-const User = require('./userDb');
+const db = require('./userDb');
 
 const router = express.Router();
 
-router.post('/', (req, res) => {
+
+router.get('/', (req, res) => {
+      console.log(req.body);
+      console.log(req.params);
+      console.log(req.query);
+});
+
+router.post('/', (req, res) => {      
 
 });
 
@@ -12,9 +19,6 @@ router.post('/:id/posts', (req, res) => {
 
 });
 
-router.get('/', (req, res) => {
-
-});
 
 router.get('/:id', (req, res) => {
 
@@ -46,4 +50,4 @@ function validatePost(req, res, next) {
 
 };
 
-module.exports = router;
+module.exports = UserRouter;
