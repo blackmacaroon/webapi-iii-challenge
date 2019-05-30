@@ -1,13 +1,14 @@
 // const express = require('express');
 
-const User = require('./userDb');
+const Users = require('./userDb');
+const Posts = require('../posts/postDb');
 
 const router = require('express').Router();
 
 // get list of users ITS WORKING
 router.get('/', (req, res) => {
       
-      User.get()
+      Users.get()
       .then(users => {
             res.status(200).json(users);
       })
@@ -18,7 +19,7 @@ router.get('/', (req, res) => {
 
 // create new user ITS WORKING
 router.post('/', validateUser, (req, res) => {      
-      User.insert(req.body)
+      Users.insert(req.body)
       .then(user => {
             res.status(201).json(user);
             // 201 CREATED
@@ -28,13 +29,15 @@ router.post('/', validateUser, (req, res) => {
       })
 });
 
+// post new post to user id
 router.post('/:id/posts', validateUserId, validatePost, (req, res) => {
       const post = req.body;
       // console.log(req.body);
       const id = req.params.id;
       post.user_id = id;
       
-      User.insert(post)
+      console.log('post', post)
+      Posts.insert(post)
       .then( post => {
             res.status(201).json(post);
             // 201 CREATED
@@ -48,7 +51,7 @@ router.post('/:id/posts', validateUserId, validatePost, (req, res) => {
 
 //get user through middleware with id ITS WORKING
 router.get('/:id', validateUserId, (req, res) => {
-      User.getById(req.params.id)
+      Users.getById(req.params.id)
       .then(user => {
             res.status(200).json(user);
       })
@@ -59,7 +62,7 @@ router.get('/:id', validateUserId, (req, res) => {
  //get posts from specific user id ITS WORKING
 router.get('/:id/posts', validateUserId, async (req, res) => {
       try {
-            const id = User.getById(req.params.user_id);
+            const id = Users.getById(req.params.user_id);
             if (!id) {
                   res.status(404).json({ message: 'Sorry, no posts exist with that ID'});
             } else {
@@ -75,7 +78,7 @@ router.get('/:id/posts', validateUserId, async (req, res) => {
 // remove user ITS WORKING
 router.delete('/:id', async (req, res) => {
       try {
-            const count = await User.remove(req.params.id);
+            const count = await Users.remove(req.params.id);
             if (count > 0) {
                   res.status(200).json({ message: 'This user no longer exists.'});
             } else {
@@ -90,7 +93,7 @@ router.delete('/:id', async (req, res) => {
 // edit user ITS WORKING
 router.put('/:id', async (req, res) => {
       try {
-            const user = await User.update(req.params.id, req.body);
+            const user = await Users.update(req.params.id, req.body);
             if (user) {
                   res.status(200).json(user);
             } else {
@@ -105,7 +108,7 @@ router.put('/:id', async (req, res) => {
 //custom middleware
 
 async function validateUserId(req, res, next) {
-      const user = await User.getById(req.params.id)
+      const user = await Users.getById(req.params.id)
       if (user) {
             // console.log('user', user)
             req.user = user

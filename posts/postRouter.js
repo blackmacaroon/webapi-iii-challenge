@@ -31,13 +31,13 @@ router.put('/:id', (req, res) => {
 // custom middleware
 
 async function validatePostId(req, res, next) {
-      const post = await Post.getById(req.params.id);
-      if (post) {
-            res.status(200).json(req.body)
-            next()
-      } else {
-            res.status(404).json({ message: "invalid post id" })
-      }
+      // const post = await Post.getById(req.params.id);
+      // if (post) {
+      //       res.status(200).json(req.body)
+      //       next()
+      // } else {
+      //       res.status(404).json({ message: "invalid post id" })
+      // }
 };
 
 module.exports = router;
