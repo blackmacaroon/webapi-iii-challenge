@@ -4,7 +4,7 @@ const User = require('./userDb');
 
 const router = require('express').Router();
 
-
+// get list of users ITS WORKING
 router.get('/', (req, res) => {
       
       User.get()
@@ -16,6 +16,7 @@ router.get('/', (req, res) => {
       })
 });
 
+// create new user ITS WORKING
 router.post('/', (req, res) => {      
       User.insert(req.body)
       .then(user => {
@@ -26,11 +27,20 @@ router.post('/', (req, res) => {
       })
 });
 
-router.post('/:id/posts', (req, res) => {
+router.post('/:id/posts', async (req, res) => {
+      const postInfo = {...req.body, user_id: req.params.id };
 
+      try {
+            const post = await User.insert(postInfo);
+            res.status(200).json(post);
+      } catch (err) {
+            console.log(err);
+            res.status(500).json({ message: 'Error creating a post' });
+      }
 });
 
 
+//get user through middleware with id ITS WORKING
 router.get('/:id', validateUserId, (req, res) => {
       User.getById(req.params.id)
       .then(user => {
@@ -40,38 +50,50 @@ router.get('/:id', validateUserId, (req, res) => {
             res.status(500).json({ error: 'could not get user from database'});
       })
 });
-
+ //get posts from specific user id ITS WORKING
 router.get('/:id/posts', async (req, res) => {
       try {
-            const id = User.getById(req.params.user_id)
+            const id = User.getById(req.params.user_id);
             if (!id) {
-                  res.status(404).json({ message: 'Sorry, no posts exist with that ID'})
+                  res.status(404).json({ message: 'Sorry, no posts exist with that ID'});
             } else {
                   const posts = await User.getUserPosts(req.params.id);
                   res.status(200).json(posts)
             }
       } catch (err) {
-            console.log(err)
-            res.status(500).json({ message: 'Error getting posts for that ID'})
+            console.log(err);
+            res.status(500).json({ message: 'Error getting posts for that ID'});
       }
 });
 
+// remove user ITS WORKING
 router.delete('/:id', async (req, res) => {
       try {
-            const count = await User.remove(req.params.id)
+            const count = await User.remove(req.params.id);
             if (count > 0) {
                   res.status(200).json({ message: 'This user no longer exists.'});
             } else {
                   res.status(404).json({ message: 'That user could not be found'});
             }
       } catch (err) {
-            console.log(err)
+            console.log(err);
             res.status(500).json({ message: 'Error removing user' });
       }
 });
 
-router.put('/:id', (req, res) => {
-
+// edit user ITS WORKING
+router.put('/:id', async (req, res) => {
+      try {
+            const user = await User.update(req.params.id, req.body);
+            if (user) {
+                  res.status(200).json(user);
+            } else {
+                  res.status(404).json({ message: 'That user could not be found' });
+            }
+      } catch (err) {
+            console.log(err);
+            res.status(500).json({ message: 'Error updating the user' });
+      }
 });
 
 //custom middleware
@@ -90,10 +112,10 @@ async function validateUserId(req, res, next) {
 };
 
 async function validateUser(req, res, next) {
-      const user = await User.get(req.body)
-      if (user) {
-            req.body
-      }
+      // const user = await User.get(req.body)
+      // if (user) {
+      //       req.body
+      // }
 
 };
 
