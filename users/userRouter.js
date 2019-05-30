@@ -17,26 +17,32 @@ router.get('/', (req, res) => {
 });
 
 // create new user ITS WORKING
-router.post('/', (req, res) => {      
+router.post('/', validateUser, (req, res) => {      
       User.insert(req.body)
       .then(user => {
             res.status(201).json(user);
+            // 201 CREATED
       })
       .catch(err => {
             res.status(500).json({ error: 'could not post new user to database'});
       })
 });
 
-router.post('/:id/posts', validateUserId, async (req, res) => {
-      const postInfo = {...req.body, user_id: req.params.id };
-      console.log(req.body)
-      try {
-            const post = await User.insert(postInfo);
-            res.status(200).json(post);
-      } catch (err) {
+router.post('/:id/posts', validateUserId, validatePost, (req, res) => {
+      const post = req.body;
+      // console.log(req.body);
+      const id = req.params.id;
+      post.user_id = id;
+      
+      User.insert(post)
+      .then( post => {
+            res.status(201).json(post);
+            // 201 CREATED
+      })
+      .catch(err => {
             console.log(err);
             res.status(500).json({ message: 'Error creating a post' });
-      }
+      })
 });
 
 
