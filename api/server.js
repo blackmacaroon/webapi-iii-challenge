@@ -12,7 +12,13 @@ server.use(logger);
 //don't need to invoke logger b/c helmet and json are functions, logger is the ref to the function.
 
 server.get('/', (req, res) => {
-  res.send(`<h2>Let's write some middleware!</h2>`)
+  res.send(`<h2>Baby's First App!</h2>`).json({ thinkAboutIt: process.env.TAI })
+  .catch(err => {
+    console.error('\nERROR', error);
+    res.status(500).json({ error: 'Cannot even.' });
+  })
+    
+  
 });
 
 server.use('/api/posts', postRouter);
