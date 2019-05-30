@@ -27,9 +27,9 @@ router.post('/', (req, res) => {
       })
 });
 
-router.post('/:id/posts', async (req, res) => {
+router.post('/:id/posts', validateUserId, async (req, res) => {
       const postInfo = {...req.body, user_id: req.params.id };
-
+      console.log(req.body)
       try {
             const post = await User.insert(postInfo);
             res.status(200).json(post);
@@ -51,7 +51,7 @@ router.get('/:id', validateUserId, (req, res) => {
       })
 });
  //get posts from specific user id ITS WORKING
-router.get('/:id/posts', async (req, res) => {
+router.get('/:id/posts', validateUserId, async (req, res) => {
       try {
             const id = User.getById(req.params.user_id);
             if (!id) {
@@ -111,16 +111,24 @@ async function validateUserId(req, res, next) {
 
 };
 
-async function validateUser(req, res, next) {
-      // const user = await User.get(req.body)
-      // if (user) {
-      //       req.body
-      // }
-
+function validateUser(req, res, next) {
+      if(!req.body) {
+            res.status(400).json({ message: 'missing user data' })
+      } else if (!req.body.name) {
+            res.status(400).json({ message: 'missing required name field'})
+      } else {
+            next()
+      }
 };
 
 function validatePost(req, res, next) {
-
+      if(!req.body) {
+            res.status(400).json({ message: 'missing post data' })
+      } else if (!req.body.text) {
+            res.status(400).json({ message: 'missing required text field'})
+      } else {
+            next()
+      }
 };
 
 module.exports = router;
